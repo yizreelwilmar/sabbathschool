@@ -65,7 +65,7 @@
             <div>
                 <a href="<?= base_url('laporan/export_excel?bulan=' . $bulan_pilih . '&tahun=' . $tahun_pilih . '&id_kelompok=' . $id_kelompok_pilih) ?>"
                     target="_blank" class="btn btn-sm btn-success shadow-sm mr-2">
-                    <i class="fas fa-file-excel fa-sm"></i> Excel
+                    <i class="fas fa-file-excel fa-sm"></i> Excel (.xlsx)
                 </a>
 
                 <button type="button" id="btnDownloadImage" class="btn btn-sm btn-info shadow-sm">
@@ -75,12 +75,12 @@
         </div>
 
         <div class="card-body" id="areaLaporan">
-            <div class="table-responsive">
-                <table class="table table-bordered table-striped table-hover table-sm" width="100%" cellspacing="0" style="font-size: 12px;">
+            <div class="table-responsive" id="tableContainer">
+                <table class="table table-bordered table-striped table-hover table-sm" width="100%" cellspacing="0" style="font-size: 12px; background-color: #fff;">
                     <thead class="thead-dark text-center">
                         <tr>
                             <th class="align-middle" rowspan="2" width="3%">No</th>
-                            <th class="align-middle text-left" rowspan="2" style="min-width: 150px;">Nama Anggota</th>
+                            <th class="align-middle text-left sticky-col" rowspan="2" style="min-width: 150px;">Nama Anggota</th>
 
                             <?php foreach ($list_aktivitas as $akt): ?>
                                 <th class="align-middle" colspan="<?= $total_minggu ?>" data-toggle="tooltip" title="<?= $akt->nama_aktivitas ?>">
@@ -109,10 +109,9 @@
                             foreach ($anggota as $a): ?>
                                 <tr>
                                     <td class="text-center align-middle"><?= $no++ ?></td>
-                                    <td class="font-weight-bold align-middle"><?= $a['nama_anggota'] ?></td>
+                                    <td class="font-weight-bold align-middle sticky-col"><?= $a['nama_anggota'] ?></td>
 
                                     <?php foreach ($list_aktivitas as $akt): ?>
-
                                         <?php for ($m = 1; $m <= $total_minggu; $m++):
                                             $is_checked = isset($rekap[$a['id']][$akt->id][$m]);
                                         ?>
@@ -124,7 +123,6 @@
                                                 <?php endif; ?>
                                             </td>
                                         <?php endfor; ?>
-
                                     <?php endforeach; ?>
                                 </tr>
                             <?php endforeach; ?>
@@ -140,13 +138,36 @@
     </div>
 
     <style>
-        table th:nth-child(2),
-        table td:nth-child(2) {
+        /* Style default sticky column (saat normal view) */
+        .sticky-col {
             position: sticky;
             left: 0;
             background-color: #f8f9fc;
             z-index: 5;
             border-right: 2px solid #dee2e6 !important;
+        }
+
+        /* Style khusus saat capture mode aktif 
+           Ini kuncinya agar gambar full di HP 
+        */
+        .capture-mode .table-responsive {
+            overflow: visible !important;
+            /* Matikan scroll */
+            display: block !important;
+        }
+
+        .capture-mode .sticky-col {
+            position: static !important;
+            /* Matikan sticky agar tidak error di html2canvas */
+            border-right: 1px solid #dee2e6 !important;
+        }
+
+        .capture-mode {
+            width: fit-content !important;
+            /* Paksa lebar menyesuaikan konten tabel */
+            min-width: 100%;
+            background: white;
+            padding: 10px;
         }
     </style>
 
@@ -159,25 +180,50 @@
             $(document).ready(function() {
                 $('[data-toggle="tooltip"]').tooltip();
 
-                // Logic Download Gambar
                 $('#btnDownloadImage').click(function() {
                     var btn = $(this);
                     var originalText = btn.html();
+                    var element = document.querySelector("#areaLaporan");
+                    var table = document.querySelector("table");
 
-                    // Loading Effect
+                    // 1. Ubah Button jadi loading
                     btn.html('<i class="fas fa-spinner fa-spin"></i> Proses...');
                     btn.prop('disabled', true);
 
-                    // Proses Capture ID areaLaporan
-                    html2canvas(document.querySelector("#areaLaporan"), {
-                        scale: 2 // Biar gambarnya tajam (HD)
+                    // 2. Persiapan Capture: Tambahkan class mode capture
+                    // Ini akan mematikan scroll dan sticky column via CSS
+                    element.classList.add('capture-mode');
+
+                    // Ambil dimensi asli tabel agar capture pas
+                    var tableWidth = table.scrollWidth;
+                    var tableHeight = table.scrollHeight + 50; // +padding
+
+                    // 3. Eksekusi html2canvas dengan opsi khusus
+                    html2canvas(element, {
+                        scale: 2, // HD Quality
+                        useCORS: true,
+                        allowTaint: true,
+                        width: tableWidth, // Paksa lebar canvas sesuai lebar tabel (bukan layar HP)
+                        height: tableHeight,
+                        windowWidth: tableWidth, // Simulasi window browser yang lebar
+                        scrollX: 0,
+                        scrollY: 0,
+                        backgroundColor: '#ffffff'
                     }).then(canvas => {
+                        // 4. Download Hasil
                         var link = document.createElement('a');
-                        link.download = 'Laporan_Rekap_<?= $list_bulan[$bulan_pilih] ?>_<?= $tahun_pilih ?>.png';
+                        link.download = 'Rekap_<?= $detail_kelompok->nama_kelompok ?>_<?= $list_bulan[$bulan_pilih] ?>.png';
                         link.href = canvas.toDataURL("image/png");
                         link.click();
 
-                        // Reset Tombol
+                        // 5. Kembalikan Tampilan seperti semula
+                        element.classList.remove('capture-mode');
+                        btn.html(originalText);
+                        btn.prop('disabled', false);
+                    }).catch(err => {
+                        console.error("Gagal capture:", err);
+                        alert("Gagal membuat gambar.");
+                        element.classList.remove('capture-mode');
                         btn.html(originalText);
                         btn.prop('disabled', false);
                     });

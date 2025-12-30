@@ -18,6 +18,14 @@
 <script src="https://cdn.jsdelivr.net/npm/startbootstrap-sb-admin-2@4.1.4/js/sb-admin-2.min.js"></script>
 
 <script>
+    $(document).ready(function() {
+        // Cek ukuran layar saat website pertama kali dibuka
+        if ($(window).width() < 768) {
+            // Jika lebar layar kurang dari 768px (ukuran HP/Tablet), tambahkan class 'toggled'
+            $('#accordionSidebar').addClass('toggled');
+        }
+    });
+
     window.setTimeout(function() {
         $(".alert").fadeTo(500, 0).slideUp(500, function() {
             $(this).remove();

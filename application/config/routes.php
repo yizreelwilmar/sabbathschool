@@ -54,3 +54,22 @@ $route['login']  = 'auth/login';
 $route['logout'] = 'auth/logout';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
+
+
+
+$route['kelompok'] = 'kelompok/index';
+$route['kelompok/store'] = 'kelompok/store';
+$route['kelompok/update/(:num)'] = 'kelompok/update/$1';
+
+
+$route['pengurus'] = 'pengurus/index';
+$route['pengurus/store'] = 'pengurus/store';
+$route['pengurus/delete/(:num)'] = 'pengurus/delete/$1';
+
+
+$route['anggota'] = 'anggota/index';
+$route['anggota/store'] = 'anggota/store';
+$route['anggota/update'] = 'anggota/update';
+
+$route['absensi'] = 'absensi/index';
+$route['absensi/toggle'] = 'absensi/toggle';

@@ -91,25 +91,38 @@
 
     <div class="container">
 
-        <!-- SUMMARY -->
-        <div class="grid">
-            <div class="card">
+        <div class="cards">
+            <div class="card green">
                 <h3>Total Anggota</h3>
-                <p>—</p>
+                <p><?= $total_anggota ?></p>
             </div>
-            <div class="card">
+            <div class="card indigo">
                 <h3>Bulan Aktif</h3>
-                <p><?= date('F Y') ?></p>
+                <p style="font-size:22px"><?= date('F Y') ?></p>
             </div>
         </div>
 
-        <!-- SECTION -->
         <div class="section">
-            <h2>Ringkasan Absensi Bulan Ini</h2>
-            <div class="placeholder">
-                Checklist aktivitas mingguan kelompok akan muncul di sini.
-            </div>
+            <h2>Rekap Aktivitas Kelompok</h2>
+
+            <table style="width:100%;border-collapse:collapse;margin-top:15px">
+                <tr style="background:#f1f5f9">
+                    <th style="padding:12px;text-align:left">Kode</th>
+                    <th style="padding:12px;text-align:left">Aktivitas</th>
+                    <th style="padding:12px;text-align:right">Checklist</th>
+                </tr>
+                <?php foreach ($summary as $s): ?>
+                    <tr>
+                        <td style="padding:12px"><?= $s->kode ?></td>
+                        <td style="padding:12px"><?= $s->nama ?></td>
+                        <td style="padding:12px;text-align:right;font-weight:600">
+                            <?= $s->total ?: 0 ?>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </table>
         </div>
+
 
     </div>
 

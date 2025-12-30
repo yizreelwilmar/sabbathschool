@@ -8,7 +8,7 @@
 
     <meta name="robots" content="noindex, nofollow">
 
-    <link rel="icon" href="<?= base_url('assets/img/favicon.ico') ?>">
+    <link rel="icon" href="https://img.icons8.com/ios-filled/50/2563eb/church.png" type="image/png">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 

@@ -130,18 +130,27 @@
     <div class="col-lg-7 mb-4">
         <div class="card shadow mb-4 h-100">
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Grafik Tren Aktivitas</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Total Aktivitas (Akumulasi)</h6>
                 <a href="<?= base_url('laporan') ?>" class="btn btn-sm btn-primary shadow-sm">
                     <i class="fas fa-expand mr-1"></i> Full Report
                 </a>
             </div>
             <div class="card-body">
+
+                <div class="p-3 mb-3 rounded" style="background-color: #e0f7fa; border: 1px solid #b2ebf2; color: #006064; font-size: 0.875rem;">
+                    <i class="fas fa-info-circle mr-1"></i> <strong>Info:</strong>
+                    Grafik ini menunjukkan jumlah total "Centang" yang terkumpul dari seluruh anggota dan seluruh kelompok di bulan ini.
+                </div>
                 <div class="chart-area" style="height: 320px;">
-                    <canvas id="myAreaChart"></canvas>
+                    <canvas id="myBarChart"></canvas>
                 </div>
-                <div class="mt-4 text-center small text-muted">
-                    Grafik ini menunjukkan total checklist aktivitas yang masuk ke sistem bulan ini.
-                </div>
+
+                <?php if (empty($summary)): ?>
+                    <div class="text-center mt-3 small text-muted">
+                        <em>Belum ada data aktivitas bulan ini.</em>
+                    </div>
+                <?php endif; ?>
+
             </div>
         </div>
     </div>
@@ -228,28 +237,20 @@
         dataVal.push(<?= $s->total ?>);
     <?php endforeach; ?>
 
-    // 2. SETUP CHART AREA
-    var ctx = document.getElementById("myAreaChart");
+    // 2. SETUP CHART (BAR CHART)
+    var ctx = document.getElementById("myBarChart");
     if (ctx) {
-        var myLineChart = new Chart(ctx, {
-            type: 'line',
+        var myBarChart = new Chart(ctx, {
+            type: 'bar',
             data: {
                 labels: labelAkt,
                 datasets: [{
                     label: "Total Checklist",
-                    lineTension: 0.3,
-                    backgroundColor: "rgba(78, 115, 223, 0.05)",
-                    borderColor: "rgba(78, 115, 223, 1)",
-                    pointRadius: 3,
-                    pointBackgroundColor: "rgba(78, 115, 223, 1)",
-                    pointBorderColor: "rgba(78, 115, 223, 1)",
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: "rgba(78, 115, 223, 1)",
-                    pointHoverBorderColor: "rgba(78, 115, 223, 1)",
-                    pointHitRadius: 10,
-                    pointBorderWidth: 2,
+                    backgroundColor: "#4e73df",
+                    hoverBackgroundColor: "#2e59d9",
+                    borderColor: "#4e73df",
                     data: dataVal,
-                    fill: true
+                    barPercentage: 0.6,
                 }],
             },
             options: {
@@ -269,14 +270,18 @@
                             drawBorder: false
                         },
                         ticks: {
-                            maxTicksLimit: 12
-                        }
+                            maxTicksLimit: 20
+                        },
+                        maxBarThickness: 50,
                     }],
                     yAxes: [{
                         ticks: {
+                            min: 0,
                             maxTicksLimit: 5,
                             padding: 10,
-                            beginAtZero: true
+                            callback: function(value) {
+                                return value;
+                            }
                         },
                         gridLines: {
                             color: "rgb(234, 236, 244)",
@@ -291,25 +296,23 @@
                     display: false
                 },
                 tooltips: {
-                    backgroundColor: "rgb(255,255,255)",
-                    bodyFontColor: "#858796",
                     titleMarginBottom: 10,
                     titleFontColor: '#6e707e',
                     titleFontSize: 14,
+                    backgroundColor: "rgb(255,255,255)",
+                    bodyFontColor: "#858796",
                     borderColor: '#dddfeb',
                     borderWidth: 1,
                     xPadding: 15,
                     yPadding: 15,
                     displayColors: false,
-                    intersect: false,
-                    mode: 'index',
                     caretPadding: 10,
                     callbacks: {
                         label: function(tooltipItem, chart) {
-                            return 'Total: ' + tooltipItem.yLabel;
+                            return 'Terlaksana: ' + tooltipItem.yLabel + ' kali';
                         }
                     }
-                }
+                },
             }
         });
     }

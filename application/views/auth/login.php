@@ -3,128 +3,108 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Sistem Absensi Sekolah Sabat</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
     <style>
-        * {
-            box-sizing: border-box
+        :root {
+            --primary-color: #4e73df;
+            --secondary-color: #224abe;
         }
 
         body {
-            margin: 0;
-            font-family: 'Segoe UI', sans-serif;
-            background: #f1f5f9;
-            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fc;
+            height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        .login-wrapper {
-            background: #fff;
+        .login-card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
             width: 100%;
             max-width: 900px;
-            min-height: 520px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            border-radius: 18px;
-            overflow: hidden;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, .2);
+            min-height: 550px;
         }
 
-        .login-info {
-            background:
-                linear-gradient(rgba(37, 99, 235, .8), rgba(37, 99, 235, .8)),
-                url('https://images.unsplash.com/photo-1524178232363-1fb2b075b655');
-            background-size: cover;
+        .bg-login-image {
+            background: linear-gradient(135deg, rgba(78, 115, 223, 0.9), rgba(34, 74, 190, 0.8)), url('https://images.unsplash.com/photo-1524178232363-1fb2b075b655?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80');
             background-position: center;
-            color: #fff;
-            padding: 50px;
+            background-size: cover;
             display: flex;
             flex-direction: column;
             justify-content: center;
-        }
-
-        .login-info h2 {
-            font-size: 28px;
-            margin-bottom: 15px;
-        }
-
-        .login-info p {
-            line-height: 1.6;
-            opacity: .95;
-        }
-
-        .login-form {
-            padding: 50px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .login-form h2 {
-            margin-bottom: 25px;
+            align-items: center;
+            color: white;
             text-align: center;
+            padding: 40px;
         }
 
-        input {
-            width: 100%;
-            padding: 14px;
+        .login-content {
+            padding: 50px;
+        }
+
+        .form-control {
             border-radius: 10px;
-            border: 1px solid #cbd5e1;
-            margin-bottom: 15px;
-            font-size: 14px;
+            padding: 12px 15px;
+            border: 1px solid #d1d3e2;
+            font-size: 0.9rem;
         }
 
-        input:focus {
-            outline: none;
-            border-color: #2563eb;
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
         }
 
-        button {
-            padding: 14px;
-            border-radius: 10px;
-            border: none;
-            background: #2563eb;
-            color: #fff;
+        .btn-login {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            border-radius: 50px;
+            padding: 12px;
             font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .btn-login:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(78, 115, 223, 0.3);
+        }
+
+        .input-group-text {
+            border-radius: 10px;
+            border: 1px solid #d1d3e2;
+            background-color: #f8f9fc;
             cursor: pointer;
-            transition: .3s;
         }
 
-        button:hover {
-            background: #1e40af;
+        .brand-logo {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 24px;
+            margin-bottom: 10px;
+            display: inline-block;
         }
 
-        .error {
-            background: #fee2e2;
-            color: #991b1b;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            text-align: center;
-            font-size: 14px;
-        }
-
-        .back {
-            text-align: center;
-            margin-top: 15px;
-        }
-
-        .back a {
-            color: #2563eb;
-            text-decoration: none;
-            font-size: 14px;
-        }
-
-        @media(max-width:768px) {
-            .login-wrapper {
-                grid-template-columns: 1fr;
+        /* Responsive Fixes */
+        @media (max-width: 768px) {
+            .bg-login-image {
+                display: none;
             }
 
-            .login-info {
-                display: none;
+            .login-content {
+                padding: 30px;
             }
         }
     </style>
@@ -132,37 +112,101 @@
 
 <body>
 
-    <div class="login-wrapper">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-10 col-lg-12 col-md-9">
 
-        <!-- INFO -->
-        <div class="login-info">
-            <h2>Selamat Datang Kembali!</h2>
-            <p>Masuk untuk mengelola aplikasi Sabbath School Anda. Masukkan
-                username dan password Anda untuk melanjutkan.</p>
-        </div>
+                <div class="card login-card">
+                    <div class="row g-0 h-100">
 
-        <!-- FORM -->
-        <div class="login-form">
-            <h2>Login</h2>
+                        <div class="col-lg-6 bg-login-image">
+                            <div class="mb-4">
+                                <i class="fas fa-church fa-3x mb-3"></i>
+                                <h3>UKSS App</h3>
+                            </div>
+                            <h4 class="fw-light">"Melayani Tuhan dengan ketertiban dan kedisiplinan."</h4>
+                            <p class="mt-3 opacity-75 small">Sistem Absensi Sekolah Sabat Digital</p>
+                        </div>
 
-            <?php if ($this->session->flashdata('error')): ?>
-                <div class="error">
-                    <?= $this->session->flashdata('error') ?>
+                        <div class="col-lg-6">
+                            <div class="login-content h-100 d-flex flex-column justify-content-center">
+                                <div class="text-center mb-4">
+                                    <h1 class="h4 text-gray-900 mb-2 fw-bold">Selamat Datang!</h1>
+                                    <p class="text-muted small">Silakan masuk untuk mengelola data.</p>
+                                </div>
+
+                                <?php if ($this->session->flashdata('error')): ?>
+                                    <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
+                                        <?= $this->session->flashdata('error') ?>
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                <?php endif; ?>
+
+                                <form class="user" method="post" action="<?= site_url('auth/process') ?>">
+
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-bold text-muted">Username</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-user text-muted"></i></span>
+                                            <input type="text" class="form-control" name="username" placeholder="Masukkan username" required autofocus>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label class="form-label small fw-bold text-muted">Password</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-lock text-muted"></i></span>
+                                            <input type="password" class="form-control" name="password" id="passwordInput" placeholder="Masukkan password" required>
+                                            <span class="input-group-text" onclick="togglePassword()">
+                                                <i class="fas fa-eye text-muted" id="toggleIcon"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary btn-login w-100 mb-3 shadow">
+                                        Masuk <i class="fas fa-sign-in-alt ms-1"></i>
+                                    </button>
+
+                                </form>
+
+                                <div class="text-center mt-3">
+                                    <a class="small text-decoration-none text-muted" href="<?= site_url('/') ?>">
+                                        <i class="fas fa-arrow-left me-1"></i> Kembali ke Halaman Utama
+                                    </a>
+                                </div>
+
+                                <div class="text-center mt-5">
+                                    <small class="text-muted text-xs">&copy; <?= date('Y') ?> UKSS App. All Rights Reserved.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
-            <?php endif; ?>
 
-            <form method="post" action="<?= site_url('auth/process') ?>">
-                <input type="text" name="username" placeholder="Username" required>
-                <input type="password" name="password" placeholder="Password" required>
-                <button type="submit">Masuk</button>
-            </form>
-
-            <div class="back">
-                <a href="<?= site_url('/') ?>">← Kembali ke Landing</a>
             </div>
         </div>
-
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        function togglePassword() {
+            var passwordInput = document.getElementById("passwordInput");
+            var toggleIcon = document.getElementById("toggleIcon");
+
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                toggleIcon.classList.remove("fa-eye");
+                toggleIcon.classList.add("fa-eye-slash");
+            } else {
+                passwordInput.type = "password";
+                toggleIcon.classList.remove("fa-eye-slash");
+                toggleIcon.classList.add("fa-eye");
+            }
+        }
+    </script>
 
 </body>
 

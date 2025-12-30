@@ -3,204 +3,196 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Sistem Absensi Sabbath School</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Absensi Sekolah Sabat | GMAHK Cililitan</title>
+
+    <meta name="robots" content="noindex, nofollow">
+
+    <link rel="icon" href="<?= base_url('assets/img/favicon.ico') ?>">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
     <style>
-        * {
-            box-sizing: border-box;
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --secondary: #64748b;
+            --bg-light: #f8fafc;
         }
 
         body {
-            margin: 0;
-            font-family: 'Segoe UI', sans-serif;
-            background: #f8fafc;
-            color: #0f172a;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-light);
+            color: #1e293b;
+            overflow-x: hidden;
         }
 
-        a {
-            text-decoration: none;
-        }
-
-        /* ===== NAVBAR ===== */
-        header {
-            position: fixed;
+        /* Background Shape (Hiasan Pengganti Foto) */
+        .bg-shape {
+            position: absolute;
             top: 0;
             left: 0;
-            right: 0;
-            background: rgba(255, 255, 255, .95);
-            backdrop-filter: blur(8px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, .05);
-            z-index: 50;
+            width: 100%;
+            height: 50vh;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            border-bottom-left-radius: 50% 20%;
+            border-bottom-right-radius: 50% 20%;
+            z-index: -1;
         }
 
-        .nav-inner {
-            max-width: 1200px;
-            margin: auto;
-            padding: 14px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        /* HEADER */
+        .navbar-brand {
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: white !important;
         }
 
-        .brand {
-            font-weight: 700;
-            font-size: 18px;
-            color: #1e293b;
-        }
-
-        .btn-login {
-            padding: 10px 22px;
-            background: #2563eb;
-            color: #fff;
-            border-radius: 999px;
-            font-weight: 600;
-            transition: .3s;
-        }
-
-        .btn-login:hover {
-            background: #1e40af;
-        }
-
-        /* ===== HERO ===== */
-        .hero {
-            min-height: 100vh;
-            background:
-                linear-gradient(rgba(15, 23, 42, .65), rgba(15, 23, 42, .65)),
-                url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d');
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            align-items: center;
-            padding: 110px 20px 40px;
-        }
-
-        .hero-content {
-            max-width: 640px;
-            color: #fff;
-            animation: fadeUp .8s ease;
-        }
-
-        .hero-content h1 {
-            font-size: 40px;
-            margin-bottom: 16px;
-            line-height: 1.2;
-        }
-
-        .hero-content p {
-            font-size: 18px;
-            opacity: .9;
-            line-height: 1.7;
-            margin-bottom: 30px;
-        }
-
-        .btn-primary {
-            display: inline-block;
-            padding: 14px 34px;
-            background: #22c55e;
-            color: #064e3b;
-            font-weight: 700;
-            border-radius: 12px;
-            transition: .3s;
-        }
-
-        .btn-primary:hover {
-            background: #16a34a;
-            transform: translateY(-2px);
-        }
-
-        /* ===== SECTION ===== */
-        .section {
-            padding: 90px 20px;
-        }
-
-        .section-inner {
-            max-width: 1200px;
-            margin: auto;
-        }
-
-        .section-title {
-            text-align: center;
-            max-width: 640px;
-            margin: 0 auto 50px;
-        }
-
-        .section-title h2 {
-            font-size: 32px;
-            margin-bottom: 12px;
-        }
-
-        .section-title p {
-            color: #475569;
-            line-height: 1.7;
-        }
-
-        /* ===== FEATURES BACKGROUND (KELOMPOK) ===== */
-        .section-features {
-            background:
-                linear-gradient(rgba(248, 250, 252, .94), rgba(248, 250, 252, .94)),
-                url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d');
-            background-size: cover;
-            background-position: center;
-        }
-
-        /* ===== FEATURES ===== */
-        .features {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 30px;
-        }
-
-        .feature-card {
-            background: #fff;
-            padding: 32px;
+        .version-badge {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 5px 12px;
             border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, .08);
-            transition: .3s;
+            font-size: 0.75rem;
+            backdrop-filter: blur(5px);
         }
 
-        .feature-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 30px 60px rgba(0, 0, 0, .12);
+        /* HERO CARD */
+        .hero-container {
+            min-height: 85vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding-top: 60px;
         }
 
-        .feature-card h3 {
-            margin: 0 0 12px;
-            font-size: 20px;
+        .welcome-card {
+            background: white;
+            border-radius: 24px;
+            padding: 50px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s;
         }
 
-        .feature-card p {
-            color: #475569;
-            line-height: 1.6;
+        .welcome-card:hover {
+            transform: translateY(-5px);
+            /* Efek Hover Naik */
         }
 
-        /* ===== FOOTER ===== */
+        .welcome-card::top {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(to right, #2563eb, #60a5fa);
+        }
+
+        .verse-box {
+            background: #eff6ff;
+            color: #1e40af;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 30px 0;
+            font-size: 0.95rem;
+            font-style: italic;
+            border-left: 4px solid var(--primary);
+        }
+
+        .btn-login-main {
+            background: var(--primary);
+            color: white;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+            transition: all 0.3s;
+        }
+
+        .btn-login-main:hover {
+            background: var(--primary-dark);
+            transform: scale(1.05);
+            /* Efek Tombol Membesar */
+            color: white;
+            box-shadow: 0 15px 35px rgba(37, 99, 235, 0.4);
+        }
+
+        /* FEATURES ICONS */
+        .features-row {
+            margin-top: 50px;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .feature-item {
+            text-align: center;
+            color: white;
+            transition: transform 0.3s;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            background: rgba(255, 255, 255, 0.15);
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            font-size: 1.5rem;
+            backdrop-filter: blur(5px);
+        }
+
         footer {
             text-align: center;
-            padding: 30px;
-            color: #64748b;
-            font-size: 14px;
+            padding: 25px;
+            color: #94a3b8;
+            font-size: 0.85rem;
+            margin-top: auto;
         }
 
-        @keyframes fadeUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
+        /* Responsive Text */
+        @media (max-width: 768px) {
+            .welcome-card {
+                padding: 30px;
+                margin: 20px;
             }
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @media(max-width: 900px) {
-            .features {
-                grid-template-columns: 1fr;
+            .bg-shape {
+                height: 40vh;
+                border-bottom-left-radius: 0;
+                border-bottom-right-radius: 0;
             }
 
-            .hero-content h1 {
-                font-size: 32px;
+            .features-row {
+                color: #333;
+                gap: 20px;
+            }
+
+            .feature-icon {
+                background: #e2e8f0;
+                color: var(--primary);
             }
         }
     </style>
@@ -208,64 +200,72 @@
 
 <body>
 
-    <!-- HERO -->
-    <section class="hero">
-        <div class="hero-content">
-            <h1>Sistem Absensi Sabbath School</h1>
-            <p>
-                Solusi digital untuk mencatat dan memantau
-                aktivitas kelompok Sabbath School secara
-                mingguan, rapi, dan terstruktur.
-            </p>
-            <a href="<?= site_url('login') ?>" class="btn-primary">
-                Masuk sebagai Pengurus / Admin
+    <div class="bg-shape"></div>
+
+    <nav class="navbar navbar-dark pt-4">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <i class="fas fa-church me-2"></i> GMAHK Cililitan
+            </a>
+            <span class="version-badge">Sistem Absensi v1.0</span>
+        </div>
+    </nav>
+
+    <div class="hero-container">
+
+        <div class="welcome-card" data-aos="fade-up" data-aos-duration="1000">
+            <div class="mb-3">
+                <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2">
+                    Portal Pengurus
+                </span>
+            </div>
+
+            <h1 class="fw-bold mb-2">Selamat Sabat!</h1>
+            <p class="text-muted">Silakan masuk untuk mengisi data absensi dan laporan kelas.</p>
+
+            <div class="verse-box" data-aos="zoom-in" data-aos-delay="200">
+                <i class="fas fa-quote-left me-2 opacity-50"></i>
+                "Ingatlah dan kuduskanlah hari Sabat."
+                <div class="mt-2 fw-bold text-end small">- Keluaran 20:8</div>
+            </div>
+
+            <a href="<?= site_url('login') ?>" class="btn-login-main">
+                <i class="fas fa-sign-in-alt me-2"></i> Login Sekarang
             </a>
         </div>
-    </section>
 
-    <!-- FEATURES -->
-    <section class="section section-features">
-        <div class="section-inner">
-            <div class="section-title">
-                <h2>Mengelola Absensi dengan Mudah</h2>
-                <p>
-                    Dirancang untuk membantu pengurus kelompok
-                    dalam mencatat aktivitas Sabbath School
-                    secara konsisten dan terorganisir.
-                </p>
+        <div class="features-row">
+            <div class="feature-item" data-aos="fade-up" data-aos-delay="400">
+                <div class="feature-icon"><i class="fas fa-mobile-alt"></i></div>
+                <div class="small fw-bold">Akses Mudah</div>
             </div>
-
-            <div class="features">
-                <div class="feature-card">
-                    <h3>📋 Pencatatan Terstruktur</h3>
-                    <p>
-                        Absensi mingguan dicatat berdasarkan
-                        kelompok dengan format yang rapi.
-                    </p>
-                </div>
-
-                <div class="feature-card">
-                    <h3>📊 Rekap Otomatis</h3>
-                    <p>
-                        Data direkap per bulan dan dapat
-                        diekspor ke Excel.
-                    </p>
-                </div>
-
-                <div class="feature-card">
-                    <h3>🔐 Akses Aman</h3>
-                    <p>
-                        Sistem hanya dapat diakses oleh
-                        pengurus dan admin.
-                    </p>
-                </div>
+            <div class="feature-item" data-aos="fade-up" data-aos-delay="500">
+                <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                <div class="small fw-bold">Data Aman</div>
+            </div>
+            <div class="feature-item" data-aos="fade-up" data-aos-delay="600">
+                <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+                <div class="small fw-bold">Laporan Rapi</div>
             </div>
         </div>
-    </section>
+
+    </div>
 
     <footer>
-        © <?= date('Y') ?> Sistem Absensi Sabbath School
+        &copy; <?= date('Y') ?> <strong>GMAHK Cililitan</strong>. All Rights Reserved.<br>
+        <span class="small opacity-75">Melayani dengan Sepenuh Hati.</span>
     </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <script>
+        // Inisialisasi Animasi
+        AOS.init({
+            once: true, // Animasi hanya sekali saat load
+            offset: 50
+        });
+    </script>
 
 </body>
 

@@ -69,4 +69,13 @@ class Anggota_model extends CI_Model
         if ($action == 'activate') return $this->db->update('anggota', ['status' => 'aktif']);
         return false;
     }
+
+    public function get_by_kelompok($id_kelompok)
+    {
+        return $this->db->where('id_kelompok', $id_kelompok)
+            ->where('status', 'aktif') // Hanya ambil yang aktif
+            ->order_by('nama_anggota', 'ASC')
+            ->get('anggota')
+            ->result();
+    }
 }

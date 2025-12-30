@@ -1,29 +1,52 @@
 <?php
+defined('BASEPATH') or exit('No direct script access allowed');
+
 class Laporan_model extends CI_Model
 {
-
-    public function get_rekap_bulanan($id_kelompok, $bulan, $tahun)
+    // Ambil Data Rekap Matrix
+    public function get_rekap_bulanan_mingguan($bulan, $tahun, $id_kelompok)
     {
-        if (!$id_kelompok) return [];
+        // 1. Ambil Anggota
+        $anggota = $this->db->where('id_kelompok', $id_kelompok)
+            ->where('status', 'aktif')
+            ->order_by('nama_anggota', 'ASC')
+            ->get('anggota')
+            ->result_array();
 
-        // Ambil semua anggota di kelompok tersebut
+        // 2. Ambil Transaksi (PENTING: Ambil tanggalnya juga)
+        $this->db->select('id_anggota, id_aktivitas, tanggal');
+        $this->db->from('absensi');
+        $this->db->where('MONTH(tanggal)', $bulan);
+        $this->db->where('YEAR(tanggal)', $tahun);
         $this->db->where('id_kelompok', $id_kelompok);
-        $anggota = $this->db->get('anggota')->result_array();
+        $this->db->where('poin', 1);
+        $transaksi = $this->db->get()->result_array();
 
-        foreach ($anggota as $key => $a) {
-            // Ambil data absensi untuk anggota ini pada bulan/tahun terkait
-            $this->db->where('id_anggota', $a['id']);
-            $this->db->where('bulan', $bulan);
-            $this->db->where('tahun', $tahun);
-            $absensi = $this->db->get('absensi')->result_array();
+        // 3. Mapping Data (Penyusunan Array Matrix Mingguan)
+        // Format: $data_rekap[ID_ANGGOTA][ID_AKTIVITAS][MINGGU_KE] = 1 (Checklist)
+        $data_rekap = [];
 
-            // Format data agar mudah dibaca di View: [id_aktivitas][minggu_ke]
-            $check_matrix = [];
-            foreach ($absensi as $abs) {
-                $check_matrix[$abs['id_aktivitas']][$abs['minggu_ke']] = true;
-            }
-            $anggota[$key]['matrix'] = $check_matrix;
+        foreach ($transaksi as $t) {
+            // Hitung Minggu ke berapa tanggal ini dalam bulan tersebut
+            // Logika: Week Number = ceiling((Day of Month) / 7) atau logika khusus Sabat
+            // Karena ini Sekolah Sabat, biasanya dihitung Sabtu ke-1, Sabtu ke-2, dst.
+
+            $day = date('j', strtotime($t['tanggal'])); // Tanggal (1-31)
+
+            // Logika Sederhana:
+            // Tgl 1-7   = Minggu 1
+            // Tgl 8-14  = Minggu 2
+            // Tgl 15-21 = Minggu 3
+            // Tgl 22-28 = Minggu 4
+            // Tgl 29-31 = Minggu 5
+            $minggu_ke = ceil($day / 7);
+
+            $data_rekap[$t['id_anggota']][$t['id_aktivitas']][$minggu_ke] = true;
         }
-        return $anggota;
+
+        return [
+            'anggota' => $anggota,
+            'rekap'   => $data_rekap
+        ];
     }
 }

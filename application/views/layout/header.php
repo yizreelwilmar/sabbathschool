@@ -52,7 +52,12 @@
         }
 
         /* Terapkan animasi ke konten utama */
-        .container-fluid {
+        /* Terapkan animasi ke ISI konten saja (Bukan wadahnya) */
+        /* Ini mencegah Modal ikut teranimasi yang bikin error layout */
+        .container-fluid>.row,
+        .container-fluid>.card,
+        .container-fluid>h1,
+        .container-fluid>div:not(.modal) {
             animation-duration: 0.6s;
             animation-fill-mode: both;
             animation-name: fadeInUp;

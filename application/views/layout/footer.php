@@ -8,7 +8,7 @@
 </footer>
 </div>
 </div>
-<a class="scroll-to-top rounded" href="#page-top">
+<a class="scroll-to-top rounded" href="#page-top" style="opacity: 0; transition: opacity 0.3s;">
     <i class="fas fa-angle-up"></i>
 </a>
 
@@ -19,19 +19,47 @@
 
 <script>
     $(document).ready(function() {
-        // Cek ukuran layar saat website pertama kali dibuka
+
+        // 1. Mobile Responsiveness Logic
         if ($(window).width() < 768) {
-            // Jika lebar layar kurang dari 768px (ukuran HP/Tablet), tambahkan class 'toggled'
             $('#accordionSidebar').addClass('toggled');
         }
-    });
 
-    window.setTimeout(function() {
-        $(".alert").fadeTo(500, 0).slideUp(500, function() {
-            $(this).remove();
+        // 2. Alert Auto Close (Smooth Fade Out)
+        window.setTimeout(function() {
+            $(".alert").fadeTo(500, 0).slideUp(500, function() {
+                $(this).remove();
+            });
+        }, 3000);
+
+        // 3. Smooth Scroll to Top Logic (Perbaikan UI)
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 100) {
+                $('.scroll-to-top').css('opacity', '1').fadeIn();
+            } else {
+                $('.scroll-to-top').fadeOut();
+            }
         });
-    }, 3000);
+
+        // 4. Smooth Anchor Scrolling (Untuk semua link yang pakai #)
+        $('a.js-scroll-trigger[href*="#"]:not([href="#"])').click(function() {
+            if (location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname) {
+                var target = $(this.hash);
+                target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
+                if (target.length) {
+                    $('html, body').animate({
+                        scrollTop: (target.offset().top - 70) // -70 biar gak ketutupan navbar
+                    }, 1000, "easeInOutExpo");
+                    return false;
+                }
+            }
+        });
+    });
 </script>
+
+</body>
+
+</html>
 
 </body>
 

@@ -98,6 +98,7 @@
                                 </th>
                                 <th width="5%" class="align-middle">No</th>
                                 <th class="align-middle">Nama Anggota</th>
+                                <th class="align-middle">Tanggal Lahir</th>
                                 <th class="align-middle">Status</th>
                                 <th class="align-middle">No HP / WhatsApp</th>
                                 <th width="10%" class="text-center align-middle">Aksi</th>
@@ -120,6 +121,14 @@
                                         </td>
                                         <td class="align-middle"><?= $no++ ?></td>
                                         <td class="align-middle font-weight-bold"><?= $a->nama_anggota ?></td>
+                                        <td class="align-middle"> <?php
+                                                                    if ($a->tanggal_lahir && $a->tanggal_lahir != '0000-00-00') {
+                                                                        echo date('d M Y', strtotime($a->tanggal_lahir));
+                                                                    } else {
+                                                                        echo '-';
+                                                                    }
+                                                                    ?>
+                                        </td>
                                         <td class="align-middle">
                                             <?php if ($a->status == 'aktif'): ?>
                                                 <span class="badge badge-success px-2 py-1">Aktif</span>
@@ -141,7 +150,7 @@
                                             <button type="button" class="btn btn-outline-info btn-sm btn-circle btn-edit mr-1"
                                                 data-id="<?= $a->id ?>"
                                                 data-nama="<?= $a->nama_anggota ?>"
-                                                data-hp="<?= $a->no_hp ?>">
+                                                data-tgl="<?= $a->tanggal_lahir ?>" data-hp="<?= $a->no_hp ?>">
                                                 <i class="fas fa-pen"></i>
                                             </button>
                                             <a href="<?= base_url('anggota/delete/' . $a->id) ?>" class="btn btn-outline-danger btn-sm btn-circle" onclick="return confirm('Hapus anggota ini?')">
@@ -180,6 +189,10 @@
                             <input type="text" name="nama_anggota" class="form-control" required placeholder="Nama sesuai KTP">
                         </div>
                         <div class="form-group">
+                            <label>Tanggal Lahir</label>
+                            <input type="date" name="tanggal_lahir" class="form-control">
+                        </div>
+                        <div class="form-group">
                             <label>No HP (Opsional)</label>
                             <input type="text" name="no_hp" class="form-control" placeholder="08...">
                         </div>
@@ -207,6 +220,10 @@
                         <div class="form-group">
                             <label>Nama Lengkap</label>
                             <input type="text" name="nama_anggota" id="edit_nama" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Tanggal Lahir</label>
+                            <input type="date" name="tanggal_lahir" id="edit_tgl" class="form-control">
                         </div>
                         <div class="form-group">
                             <label>No HP / WhatsApp</label>
@@ -270,10 +287,12 @@
 
                     var id = $(this).data('id');
                     var nama = $(this).data('nama');
+                    var tgl = $(this).data('tgl'); // AMBIL DATA TGL
                     var hp = $(this).attr('data-hp'); // Pakai attr biar angka 0 depan tidak hilang
 
                     $('#edit_id').val(id);
                     $('#edit_nama').val(nama);
+                    $('#edit_tgl').val(tgl); // ISI KE INPUT TGL
                     $('#edit_hp').val(hp);
 
                     $('#modalEdit').modal('show');

@@ -1,6 +1,13 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
+// 1. Panggil Autoload Composer untuk PhpSpreadsheet
+require FCPATH . 'vendor/autoload.php';
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
+
 class Anggota extends CI_Controller
 {
     public function __construct()
@@ -38,7 +45,7 @@ class Anggota extends CI_Controller
             $config['query_string_segment'] = 'page';
             $config['reuse_query_string'] = TRUE;
 
-            // Styles
+            // Styles Pagination
             $config['full_tag_open'] = '<ul class="pagination justify-content-center mt-4">';
             $config['full_tag_close'] = '</ul>';
             $config['first_tag_open'] = '<li class="page-item">';
@@ -79,9 +86,11 @@ class Anggota extends CI_Controller
             $id_kelompok = $this->session->userdata('id_kelompok');
         }
 
+        // [UPDATE] Tambah Tanggal Lahir
         $data = [
             'id_kelompok'   => $id_kelompok,
             'nama_anggota'  => $this->input->post('nama_anggota'),
+            'tanggal_lahir' => $this->input->post('tanggal_lahir') ?: NULL, // Ambil input tanggal
             'no_hp'         => $this->clean_number($this->input->post('no_hp')),
             'status'        => 'aktif'
         ];
@@ -100,9 +109,11 @@ class Anggota extends CI_Controller
             $id_kelompok = $this->session->userdata('id_kelompok');
         }
 
+        // [UPDATE] Tambah Tanggal Lahir
         $data = [
-            'nama_anggota' => $this->input->post('nama_anggota'),
-            'no_hp'        => $this->clean_number($this->input->post('no_hp'))
+            'nama_anggota'  => $this->input->post('nama_anggota'),
+            'tanggal_lahir' => $this->input->post('tanggal_lahir') ?: NULL, // Ambil input tanggal
+            'no_hp'         => $this->clean_number($this->input->post('no_hp'))
         ];
 
         $this->Anggota_model->update($id, $data);
@@ -138,15 +149,38 @@ class Anggota extends CI_Controller
         }
     }
 
-    // --- FITUR IMPORT ---
+    // --- FITUR IMPORT (UPDATE MENGGUNAKAN PHPSPREADSHEET) ---
+
     public function download_template()
     {
-        header('Content-Type: text/csv');
-        header('Content-Disposition: attachment; filename="Template_Anggota.csv"');
-        $output = fopen('php://output', 'w');
-        fputcsv($output, ['NAMA ANGGOTA', 'NO HP (Opsional)']);
-        fputcsv($output, ['Budi Santoso', '08123456789']);
-        fclose($output);
+        // 1. Buat Spreadsheet Baru
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // 2. Set Header Kolom
+        $sheet->setCellValue('A1', 'Nama Anggota');
+        $sheet->setCellValue('B1', 'Tanggal Lahir (YYYY-MM-DD)'); // Kolom Baru
+        $sheet->setCellValue('C1', 'No HP (Opsional)');
+
+        // 3. Set Contoh Data
+        $sheet->setCellValue('A2', 'Contoh: Budi Santoso');
+        $sheet->setCellValue('B2', '1995-12-25');
+        $sheet->setCellValue('C2', '08123456789');
+
+        // 4. Styling Sederhana
+        $sheet->getStyle('A1:C1')->getFont()->setBold(true);
+        foreach (range('A', 'C') as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
+        }
+
+        // 5. Output file .xlsx
+        $filename = 'Template_Anggota.xlsx';
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save('php://output');
     }
 
     public function import()
@@ -156,31 +190,63 @@ class Anggota extends CI_Controller
             $id_kelompok = $this->session->userdata('id_kelompok');
         }
 
+        // Gunakan nama input 'file_csv' agar sesuai dengan View, walau filenya bisa Excel
         if (isset($_FILES["file_csv"]["name"])) {
             $path = $_FILES["file_csv"]["tmp_name"];
-            $object = fopen($path, 'r');
-            $data_batch = [];
-            $row = 0;
-            while (($line = fgetcsv($object, 1000, ",")) !== FALSE) {
-                $row++;
-                if ($row == 1 || empty($line[0])) continue;
 
-                $data_batch[] = [
-                    'id_kelompok'   => $id_kelompok,
-                    'nama_anggota'  => filter_var($line[0], FILTER_SANITIZE_STRING),
-                    'no_hp'         => isset($line[1]) ? $this->clean_number($line[1]) : '',
-                    'status'        => 'aktif'
-                ];
-            }
-            fclose($object);
+            try {
+                // 1. Load file Excel/CSV menggunakan IOFactory
+                $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($path);
+                $sheet = $spreadsheet->getActiveSheet()->toArray();
 
-            if (!empty($data_batch)) {
-                $this->Anggota_model->insert_batch($data_batch);
-                $this->session->set_flashdata('success', count($data_batch) . ' Anggota diimport!');
+                $data_batch = [];
+
+                // 2. Loop data (Mulai index 1 untuk melewati Header)
+                for ($i = 1; $i < count($sheet); $i++) {
+                    $nama = $sheet[$i][0];    // Kolom A
+                    $tgl_raw = $sheet[$i][1]; // Kolom B (Tanggal Lahir)
+                    $hp = isset($sheet[$i][2]) ? $sheet[$i][2] : ''; // Kolom C
+
+                    // Skip jika nama kosong
+                    if (empty($nama)) continue;
+
+                    // 3. Logika Konversi Tanggal Excel
+                    $tanggal_lahir_db = NULL;
+                    if (!empty($tgl_raw)) {
+                        if (is_numeric($tgl_raw)) {
+                            // Jika format serial number excel (contoh: 44562)
+                            $tanggal_lahir_db = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($tgl_raw)->format('Y-m-d');
+                        } else {
+                            // Jika format text "1995-12-25" atau "25-12-1995"
+                            $ts = strtotime($tgl_raw);
+                            if ($ts) $tanggal_lahir_db = date('Y-m-d', $ts);
+                        }
+                    }
+
+                    $data_batch[] = [
+                        'id_kelompok'   => $id_kelompok,
+                        'nama_anggota'  => $nama,
+                        'tanggal_lahir' => $tanggal_lahir_db, // Masukkan ke DB
+                        'no_hp'         => $this->clean_number($hp),
+                        'status'        => 'aktif'
+                    ];
+                }
+
+                // 4. Simpan ke Database
+                if (!empty($data_batch)) {
+                    $this->Anggota_model->insert_batch($data_batch);
+                    $this->session->set_flashdata('success', count($data_batch) . ' Anggota berhasil diimport!');
+                } else {
+                    $this->session->set_flashdata('error', 'File kosong atau format salah.');
+                }
+            } catch (Exception $e) {
+                $this->session->set_flashdata('error', 'Gagal membaca file: ' . $e->getMessage());
             }
         }
         $this->_redirect_back($id_kelompok);
     }
+
+    // --- HELPER FUNCTIONS ---
 
     private function _redirect_back($id_kelompok)
     {
